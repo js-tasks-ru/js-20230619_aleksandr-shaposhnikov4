@@ -5,11 +5,11 @@
  * @returns {string[]}
  */
 export function sortStrings(arr, param = 'asc') {
-    let arrToSort = [...arr];
-    arrToSort.sort(compareFunc);
+  let arrToSort = [...arr];
+  arrToSort.sort(compareFunc);
 
   if (param === 'desc')
-  arrToSort.reverse();
+  {arrToSort.reverse();}
 
   return arrToSort;
 }
@@ -17,7 +17,7 @@ export function sortStrings(arr, param = 'asc') {
 function compareFunc(a, b) {
   if (a.toLowerCase() === b.toLowerCase()) {
     return a.localeCompare(b, 'ru', {caseFirst: "upper"});
-    } else {
+  } else {
     return a.localeCompare(b, 'ru', {sensitivity: 'base'});
-    }
+  }
 }
