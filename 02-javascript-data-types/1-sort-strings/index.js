@@ -7,16 +7,15 @@
 export function sortStrings(arr, param = 'asc') {
   let arrToSort = [...arr];
   
-  arrToSort.sort((a, b) => param === 'asc' ? compareFunc(a, b) : compareFunc(b, a));
+  arrToSort.sort(param === 'asc' ? compareFuncAsc : compareFuncDesc);
 
   return arrToSort;
 }
 
-function compareFunc(a, b, param) {
-  
-  if (a.toLowerCase() === b.toLowerCase()) {
-    return a.localeCompare(b, 'ru', {caseFirst: "upper"});
-  } else {
-    return a.localeCompare(b, 'ru', {sensitivity: 'base'});
-  }
+function compareFuncAsc(a, b) {
+  return a.localeCompare(b, 'ru', {caseFirst: "upper"});
+}
+
+function compareFuncDesc(a, b) {
+  return b.localeCompare(a, 'ru', {caseFirst: "upper"});
 }
