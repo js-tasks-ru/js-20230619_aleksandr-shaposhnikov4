@@ -6,15 +6,14 @@
  */
 export function sortStrings(arr, param = 'asc') {
   let arrToSort = [...arr];
-  arrToSort.sort(compareFunc);
-
-  if (param === 'desc')
-  {arrToSort.reverse();}
+  
+  arrToSort.sort((a, b) => param === 'asc' ? compareFunc(a, b) : compareFunc(b, a));
 
   return arrToSort;
 }
 
-function compareFunc(a, b) {
+function compareFunc(a, b, param) {
+  
   if (a.toLowerCase() === b.toLowerCase()) {
     return a.localeCompare(b, 'ru', {caseFirst: "upper"});
   } else {
