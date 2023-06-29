@@ -5,7 +5,7 @@
  * @returns {string[]}
  */
 export function sortStrings(arr, param = 'asc') {
-  let arrToSort = [...arr];
+  const arrToSort = [...arr];
   
   arrToSort.sort(param === 'asc' ? compareFuncAsc : compareFuncDesc);
 
