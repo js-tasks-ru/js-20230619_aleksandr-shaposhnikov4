@@ -10,7 +10,11 @@ export function createGetter(path) {
     let currentObj = obj;
     
     for (let property of properties) {
-      currentObj = currentObj?.[property];
+      if (!currentObj[property]) {
+        return;
+      }
+      
+      currentObj = currentObj[property];
     }
     
     return currentObj;
