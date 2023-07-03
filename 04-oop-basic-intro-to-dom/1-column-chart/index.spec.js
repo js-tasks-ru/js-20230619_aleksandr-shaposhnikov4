@@ -12,6 +12,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
     });
 
     document.body.append(columnChart.element);
+    console.log("VISIBLE: " + columnChart.element.checkVisibility());
   });
 
   afterEach(() => {
@@ -30,7 +31,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
     columnChart = new ColumnChart({ label });
 
     const title = columnChart.element.querySelector('.column-chart__title');
-
+    console.log("COMPARE TITLE: " + (title.textContent === label));
     expect(title).toHaveTextContent(label);
   });
 
@@ -56,7 +57,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
     const value = 200;
     columnChart = new ColumnChart({ value });
     const columnLink = columnChart.element.querySelector('.column-chart__header');
-
+    console.log("TOTAL VALUE: " + columnLink.textContent);
     expect(columnLink).toHaveTextContent(value);
   });
 
@@ -66,7 +67,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
 
     columnChart = new ColumnChart({ formatHeading, value });
     const columnLink = columnChart.element.querySelector('.column-chart__header');
-
+    console.log("TOTAL WITH FORMAT: " + columnLink.textContent);
     expect(columnLink).toHaveTextContent(formatHeading(value));
   });
 
@@ -108,7 +109,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
   it('should have loading indication if data wasn\'t passed ', () => {
     columnChart = new ColumnChart();
     document.body.append(columnChart);
-
+    console.log("COMPARE \"column-chart_loading\" CLASS NAME: " + (columnChart.element.className === 'column-chart_loading'));
     expect(columnChart.element).toHaveClass('column-chart_loading');
   });
 
