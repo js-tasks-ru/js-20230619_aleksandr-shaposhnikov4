@@ -17,13 +17,15 @@ export default class ColumnChart {
   }
 
   update(newData = []) {
-    if (!newData) {
-      this.element.classList.add("column-chart_loading");
-    }
-    
+    this.element.classList.add("column-chart_loading");
+
     this._data = newData;
     const bodyElement = this.element.querySelector("[data-element='body']");
     bodyElement.innerHTML = this.createColumnsTemplate();
+
+    if (this._data.length) {
+      this.element.classList.remove('column-chart_loading');
+    }
   }
 
   destroy() {
@@ -53,7 +55,6 @@ export default class ColumnChart {
             </div>`;    
   }
 
-
   render() {
     const parentDiv = document.createElement('div');
 
@@ -62,12 +63,8 @@ export default class ColumnChart {
     this.element = parentDiv.firstElementChild;
 
     if (this._data.length) {
-
       this.element.classList.remove("column-chart_loading");
     }
-
-    this.subElements = this.getSubElements();
-
   }
 
   createLinkTemplate() {
@@ -76,18 +73,7 @@ export default class ColumnChart {
       : "";
   }
 
-  getSubElements() {
-    const res = {};
-    const elements = this.element.querySelectorAll("[data-element]");
-
-    for (const child of elements) {
-      const name = child.dataset.element;
-      res[name] = child;
-    }
-    return res;
-  }
-
-  createColumnsTemplate = () => this._data.map(item => this.createColumnTemplate(item)).join("");
+  createColumnsTemplate = () => this._data.map(this.createColumnTemplate.bind(this)).join("");
 
   createColumnTemplate(item) {
     const maxValue = Math.max(...this._data);
