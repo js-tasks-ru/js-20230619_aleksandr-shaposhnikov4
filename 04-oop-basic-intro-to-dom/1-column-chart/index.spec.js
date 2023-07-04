@@ -105,7 +105,6 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
   it('should have loading indication if data wasn\'t passed ', () => {
     columnChart = new ColumnChart();
     document.body.append(columnChart);
-    console.log("COMPARE \"column-chart_loading\" CLASS NAME: " + (columnChart.element.className === 'column-chart_loading'));
     expect(columnChart.element).toHaveClass('column-chart_loading');
   });
 
