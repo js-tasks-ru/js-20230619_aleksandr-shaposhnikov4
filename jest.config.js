@@ -3,7 +3,8 @@ const config = {
   setupFilesAfterEnv: ['./jest-setup-files-after-env.js'],
   modulePathIgnorePatterns: [
     ".*__mocks__.*"
-  ]
+  ],
+  testEnvironment: 'jsdom'
 };
 
 if (process.env.CI) {
