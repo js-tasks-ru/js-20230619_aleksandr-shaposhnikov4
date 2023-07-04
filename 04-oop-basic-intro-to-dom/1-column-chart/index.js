@@ -23,9 +23,7 @@ export default class ColumnChart {
     const bodyElement = this.element.querySelector("[data-element='body']");
     bodyElement.innerHTML = this.createColumnsTemplate();
 
-    if (this._data.length) {
-      this.element.classList.remove('column-chart_loading');
-    }
+    this.element.classList.remove('column-chart_loading');
   }
 
   destroy() {
