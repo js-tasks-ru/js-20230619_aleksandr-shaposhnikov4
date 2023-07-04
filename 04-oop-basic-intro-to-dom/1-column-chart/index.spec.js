@@ -30,6 +30,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
     columnChart = new ColumnChart({ label });
 
     const title = columnChart.element.querySelector('.column-chart__title');
+
     expect(title).toHaveTextContent(label);
   });
 
@@ -55,6 +56,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
     const value = 200;
     columnChart = new ColumnChart({ value });
     const columnLink = columnChart.element.querySelector('.column-chart__header');
+
     expect(columnLink).toHaveTextContent(value);
   });
 
@@ -64,6 +66,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
 
     columnChart = new ColumnChart({ formatHeading, value });
     const columnLink = columnChart.element.querySelector('.column-chart__header');
+
     expect(columnLink).toHaveTextContent(formatHeading(value));
   });
 
@@ -105,6 +108,7 @@ describe('oop-basic-intro-to-dom/column-chart', () => {
   it('should have loading indication if data wasn\'t passed ', () => {
     columnChart = new ColumnChart();
     document.body.append(columnChart);
+
     expect(columnChart.element).toHaveClass('column-chart_loading');
   });
 
