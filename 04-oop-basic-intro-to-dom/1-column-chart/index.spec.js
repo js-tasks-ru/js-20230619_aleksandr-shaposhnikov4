@@ -2,7 +2,7 @@ import ColumnChart from './index.js';
 
 describe('oop-basic-intro-to-dom/column-chart', () => {
   let columnChart;
-
+//
   beforeEach(() => {
     columnChart = new ColumnChart({
       data: [],
