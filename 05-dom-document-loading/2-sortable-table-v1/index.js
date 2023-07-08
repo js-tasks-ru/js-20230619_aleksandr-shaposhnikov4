@@ -11,7 +11,7 @@ export default class SortableTable {
     wrapper.innerHTML = this.getTable();
 
     this.element = wrapper.firstElementChild;
-    this.subElements = this.getSubElement(this.element);
+    this.subElements = this.getSubElements(this.element);
   }
 
   sort(field, order) {
@@ -28,7 +28,7 @@ export default class SortableTable {
     this.subElements.body.innerHTML = this.getTableRows(sortedData);
   }
 
-  getSubElement(element) {
+  getSubElements(element) {
     const result = {};
     const elements = element.querySelectorAll('[data-element]');
 
