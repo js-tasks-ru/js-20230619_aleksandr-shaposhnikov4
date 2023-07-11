@@ -1,11 +1,13 @@
 export default class NotificationMessage {
     static instance = null;
-    
-    constructor(message, {duration, type} = {}) {
-      this._message = message ?? '';
-      this.duration = duration ?? 1000;
-      this._type = type ?? '';
 
+    constructor(message = '', params = {}) {
+      const { duration = 1000, type = '' } = params;
+    
+      this._message = message;
+      this.duration = duration;
+      this._type = type;
+    
       this.render();
     }
     

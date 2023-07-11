@@ -1,12 +1,12 @@
 class Tooltip {
-  static instance;
+  static _instance;
   
   constructor() {
-    if (Tooltip.instance) {
-      return Tooltip.instance;
+    if (Tooltip._instance) {
+      return Tooltip._instance;
     }
 
-    Tooltip.instance = this;
+    Tooltip._instance = this;
   }
 
   initialize () {
