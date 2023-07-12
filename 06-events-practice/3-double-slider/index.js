@@ -57,7 +57,7 @@ export default class DoubleSlider {
   }
   
   calcSide(sideType) {
-    let num = sideType === 'left'
+    const num = sideType === 'left'
       ? this._selected.from - this.min
       : this.max - this._selected.to;
 
