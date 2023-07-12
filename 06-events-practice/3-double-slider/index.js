@@ -13,7 +13,7 @@ export default class DoubleSlider {
   
   render() {
     this.element = document.createElement('div');
-    this.element.innerHTML = this.getElement();        
+    this.element.innerHTML = this.getTemplate();        
     this.fillElements();
     this.addEventListener();
     this.update();
@@ -22,11 +22,12 @@ export default class DoubleSlider {
   
   fillElements() {
     this.elements = {};
-    for (const element of this.element.querySelectorAll("[data-element]"))
-    {this.elements[element.dataset.element] = element;}
+    for (const element of this.element.querySelectorAll("[data-element]")) {
+      this.elements[element.dataset.element] = element;
+    }
   }
   
-  getElement() {
+  getTemplate() {
     return `
           <div class="range-slider">
             <span data-element="from"></span>
@@ -45,8 +46,8 @@ export default class DoubleSlider {
   }
   
   update() {
-    const left = Math.floor(this.percentWithCheck(this._selected.from - this.min, this.max - this.min)) + "%";
-    const right = Math.floor(this.percentWithCheck(this.max - this._selected.to, this.max - this.min)) + "%";
+    const left = this.calcSide('left');
+    const right = this.calcSide('right');
     this.elements.from.innerHTML = this._formatValue(this._selected.from);
     this.elements.to.innerHTML = this._formatValue(this._selected.to);
     this.elements.progress.style.left = left;
@@ -55,6 +56,14 @@ export default class DoubleSlider {
     this.elements.thumbRight.style.right = right;
   }
   
+  calcSide(sideType) {
+    let num = sideType === 'left'
+      ? this._selected.from - this.min
+      : this.max - this._selected.to;
+
+    return Math.floor(this.percentWithCheck(num, this.max - this.min)) + "%";
+  }
+
   onThumbPointerDown(e) {
     this.currentPosition = this.getPosition(e);
     this.dragging = e.target;
