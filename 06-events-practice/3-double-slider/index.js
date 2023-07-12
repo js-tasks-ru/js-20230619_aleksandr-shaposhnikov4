@@ -83,30 +83,57 @@ export default class DoubleSlider {
     }
   }
   
-  percentWithCheck(min, max, otherValue) {
-    let res = min / max;
-    res = res < 0 ? 0 : res * 100;
-    res = res + otherValue > 100 ? 100 - otherValue : res;
-    return res;
+  calculatePercent(value, limit) {
+    const normalizeValue = Math.max(0, value / limit);
+    const percentage = Math.min(normalizeValue * 100, 100);
+     
+    return percentage;
   }
-  
+
+  percentWithCheck(min, max, otherValue) {
+    const percentage = this.calculatePercent(min, max);
+    const result = percentage + otherValue > 100 ? 100 - otherValue : percentage;
+
+    return result;
+  }
+
   onThumbPointerMove(e) {
-    const value = this.dragging === this.elements.thumbLeft
-      ? this.percentWithCheck(e.clientX - this.elements.inner.getBoundingClientRect().left + this.currentPosition, this.elements.inner.offsetWidth, parseFloat(this.elements.thumbRight.style.right))
-      : this.percentWithCheck(this.elements.inner.getBoundingClientRect().right - e.clientX - this.currentPosition, this.elements.inner.offsetWidth, parseFloat(this.elements.thumbLeft.style.left));
-          
-    if (this.dragging === this.elements.thumbLeft) {
-      this.dragging.style.left = this.elements.progress.style.left = value + "%";
-      this._selected.from = this.getValueFrom();
-      this.elements.from.innerHTML = this._formatValue(this.getValue().from);
-    } else {
-      this.dragging.style.right = this.elements.progress.style.right = value + "%";
-      this._selected.to = this.getValueTo();
-      this.elements.to.innerHTML = this._formatValue(this.getValue().to);
+    switch (this.dragging) {
+    case this.elements.thumbLeft:
+      this.leftThumbMove(e);
+      break;
+    case this.elements.thumbRight:
+      this.rightThumbMove(e);
+      break;
+    default:
+      throw new Error("Invalid thumb type");
     }
+
     this.element.dispatchEvent(new CustomEvent("range-select", { detail: this.getValue() }));
   }
+
+  leftThumbMove(e) {
+    const value = this.getMoveValue(e.clientX - this.elements.inner.getBoundingClientRect().left + this.currentPosition, parseFloat(this.elements.thumbRight.style.right));
+
+    this.elements.thumbLeft.style.left = value + "%";
+    this.elements.progress.style.left = value + "%";
+    this._selected.from = this.calculateValueFrom();
+    this.elements.from.innerHTML = this._formatValue(this.getValue().from);
+  }
   
+  rightThumbMove(e) {
+    const value = this.getMoveValue(this.elements.inner.getBoundingClientRect().right - e.clientX - this.currentPosition, parseFloat(this.elements.thumbLeft.style.left));
+
+    this.elements.thumbRight.style.right = value + "%";
+    this.elements.progress.style.right = value + "%";
+    this._selected.to = this.calculateValueTo();
+    this.elements.to.innerHTML = this._formatValue(this.getValue().to);
+  }
+
+  getMoveValue(value, otherValue) {
+    return this.percentWithCheck(value, this.elements.inner.offsetWidth, otherValue);
+  }
+
   reset() {
     this.setValue({
       from: this.min,
@@ -119,14 +146,14 @@ export default class DoubleSlider {
     this.update();
   }
   
-  getValueFrom = () => Math.round(this.min + .01 * parseFloat(this.elements.thumbLeft.style.left) * (this.max - this.min));
+  calculateValueFrom = () => Math.round(this.min + .01 * parseFloat(this.elements.thumbLeft.style.left) * (this.max - this.min));
 
-  getValueTo = () => Math.round(this.max - .01 * parseFloat(this.elements.thumbRight.style.right) * (this.max - this.min));
+  calculateValueTo = () => Math.round(this.max - .01 * parseFloat(this.elements.thumbRight.style.right) * (this.max - this.min));
 
   getValue() {
     return {
-      from: this.getValueFrom(),
-      to: this.getValueTo()
+      from: this.calculateValueFrom(),
+      to: this.calculateValueTo()
     };
   }
   

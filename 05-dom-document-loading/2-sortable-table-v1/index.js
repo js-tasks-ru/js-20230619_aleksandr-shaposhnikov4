@@ -16,14 +16,14 @@ export default class SortableTable {
 
   sort(field, order) {
     const sortedData = this.sortData(field, order);
-    const allColumns = this.element.querySelectorAll('.sortable-table__cell[data-id]');
-    const currentColumn = this.element.querySelector(`.sortable-table__cell[data-id="${field}"]`);
+    const columnElements = this.element.querySelectorAll('.sortable-table__cell[data-id]');
+    const currentElement = this.element.querySelector(`.sortable-table__cell[data-id="${field}"]`);
 
-    allColumns.forEach(column => {
+    columnElements.forEach(column => {
       column.dataset.order = '';
     });
 
-    currentColumn.dataset.order = order;
+    currentElement.dataset.order = order;
 
     this.subElements.body.innerHTML = this.getTableRows(sortedData);
   }

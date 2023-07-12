@@ -1,5 +1,5 @@
 export default class NotificationMessage {
-    static instance = null;
+    static lastMessage = null;
 
     constructor(message = '', params = {}) {
       const { duration = 1000, type = '' } = params;
@@ -16,13 +16,13 @@ export default class NotificationMessage {
       parent.innerHTML = this.getTemplate();
       this.element = parent.firstElementChild;
       
-      const notificationBody = this.element.querySelector('.notification-body');
-      notificationBody.textContent = this._message;
+      const notificationBodyElement = this.element.querySelector('.notification-body');
+      notificationBodyElement.textContent = this._message;
     }
 
     show(parentElement = document.body) {
-      if (NotificationMessage.instance) { 
-        NotificationMessage.instance.remove();
+      if (NotificationMessage.lastMessage) { 
+        NotificationMessage.lastMessage.remove();
       }
 
       parentElement.append(this.element);
@@ -31,7 +31,7 @@ export default class NotificationMessage {
         this.destroy();
       }, this.duration);
       
-      NotificationMessage.instance = this;
+      NotificationMessage.lastMessage = this;
     }
 
     remove() {
@@ -44,7 +44,6 @@ export default class NotificationMessage {
     destroy() {
       this.remove();
       this.element = null;
-      NotificationMessage.instance = null;
     }
   
     getTemplate() {

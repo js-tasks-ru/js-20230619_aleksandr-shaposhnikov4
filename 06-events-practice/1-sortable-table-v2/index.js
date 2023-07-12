@@ -1,6 +1,6 @@
 export default class SortableTable {
   constructor(headerConfig, {data = [], sorted = {}} = {}) {
-    this._headerConfig = headerConfig;
+    this.headerConfig = headerConfig;
     this._data = data;
     this._sorted = sorted;
     this._isSortLocally = !sorted;
@@ -18,7 +18,7 @@ export default class SortableTable {
   }
 
   onSortClick = event => {
-    const column = event.target.closest('[data-sortable="true"]');
+    const columnElement = event.target.closest('[data-sortable="true"]');
 
     const orderChange = order => {
       const orders = {
@@ -29,17 +29,17 @@ export default class SortableTable {
       return orders[order];
     };
 
-    if (column) {
-      const {id, order} = column.dataset;
+    if (columnElement) {
+      const {id, order} = columnElement.dataset;
       const newOrder = orderChange(order);
       const sortedData = this.sortData(id, newOrder);
 
-      const arrow = column.querySelector('.sortable-table__sort-arrow');
+      const arrowElement = columnElement.querySelector('.sortable-table__sort-arrow');
 
-      column.dataset.order = newOrder;
+      columnElement.dataset.order = newOrder;
 
-      if (!arrow) {
-        column.append(this.subElements.arrow);
+      if (!arrowElement) {
+        columnElement.append(this.subElements.arrowElement);
       }
 
       this.subElements.body.innerHTML = this.getTableRows(sortedData);
@@ -56,14 +56,14 @@ export default class SortableTable {
 
   sortOnClient(field, order) {
     const sortedData = this.sortData(field, order);
-    const allColumns = this.element.querySelectorAll('.sortable-table__cell[data-id]');
-    const currentColumn = this.element.querySelector(`.sortable-table__cell[data-id="${field}"]`);
+    const allcolumnElements = this.element.querySelectorAll('.sortable-table__cell[data-id]');
+    const currentColumnElement = this.element.querySelector(`.sortable-table__cell[data-id="${field}"]`);
 
-    allColumns.forEach(column => {
-      column.dataset.order = '';
+    allcolumnElements.forEach(columnElement => {
+      columnElement.dataset.order = '';
     });
 
-    currentColumn.dataset.order = order;
+    currentColumnElement.dataset.order = order;
     this.subElements.body.innerHTML = this.getTableRows(sortedData);
   }
 
@@ -89,7 +89,7 @@ export default class SortableTable {
 
   getTableHeader() {
     return `<div data-element="header" class="sortable-table__header sortable-table__row">
-    ${this._headerConfig.map(item => this.getHeaderRow(item)).join('')}</div>`;
+    ${this.headerConfig.map(this.getHeaderRow).join('')}</div>`;
   }
 
   getHeaderRow({id, title, sortable}) {
@@ -122,22 +122,24 @@ export default class SortableTable {
   }
 
   getTableRow(item) {
-    const cells = this._headerConfig.map(({id, template}) => {
+    const cells = this.headerConfig.map(({id, template}) => {
       return {
         id,
         template
       };
     });
 
-    return cells.map(({id, template}) => {
-      return template ? template(item[id]) : `<div class='sortable-table__cell'>${item[id]}</div>`;
-    }).join('');
+    return this.headerConfig
+      .map(({ id, template }) => template 
+        ? template(item[id]) 
+        : `<div class='sortable-table__cell'>${item[id]}</div>`)
+      .join('');
   }
 
   sortData(field, order) {
     const arr = [...this._data];
-    const column = this._headerConfig.find(item => item.id === field);
-    const { sortType } = column;
+    const columnElement = this.headerConfig.find(item => item.id === field);
+    const { sortType } = columnElement;
     const directions = {
       asc: 1,
       desc: -1

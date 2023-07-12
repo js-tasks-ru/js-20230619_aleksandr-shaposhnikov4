@@ -79,7 +79,7 @@ describe('events-practice/double-slider', () => {
     });
 
     const move = new MouseEvent('pointermove', {
-      clientX: -1,
+      clientX: 0,
       bubbles: true
     });
 
@@ -124,7 +124,7 @@ describe('events-practice/double-slider', () => {
     });
 
     const moveLeft = new MouseEvent('pointermove', {
-      clientX: -1,
+      clientX: 0,
       bubbles: true
     });
 
