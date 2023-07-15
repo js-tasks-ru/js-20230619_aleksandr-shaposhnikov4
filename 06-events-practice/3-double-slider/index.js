@@ -84,6 +84,10 @@ export default class DoubleSlider {
   }
   
   calculatePercent(value, limit) {
+    if (!value) {
+      return 0;
+    }
+
     const normalizeValue = Math.max(0, value / limit);
     const percentage = Math.min(normalizeValue * 100, 100);
      
@@ -113,26 +117,30 @@ export default class DoubleSlider {
   }
 
   leftThumbMove(e) {
-    const value = this.getMoveValue(e.clientX - this.elements.inner.getBoundingClientRect().left + this.currentPosition, parseFloat(this.elements.thumbRight.style.right));
+    const percentage = this.percentage(e.clientX - this.elements.inner.getBoundingClientRect().left + this.currentPosition, parseFloat(this.elements.thumbRight.style.right));
 
-    this.elements.thumbLeft.style.left = value + "%";
-    this.elements.progress.style.left = value + "%";
-    this._selected.from = this.calculateValueFrom();
-    this.elements.from.innerHTML = this._formatValue(this.getValue().from);
+    this.elements.thumbLeft.style.left = percentage + "%";
+    this.elements.progress.style.left = percentage + "%";
+
+    const value = this.calculateValueFrom();
+
+    this._selected.from = value;
+    this.elements.from.innerHTML = this._formatValue(value);
   }
   
   rightThumbMove(e) {
-    const value = this.getMoveValue(this.elements.inner.getBoundingClientRect().right - e.clientX - this.currentPosition, parseFloat(this.elements.thumbLeft.style.left));
+    const percentage = this.percentage(this.elements.inner.getBoundingClientRect().right - e.clientX - this.currentPosition, parseFloat(this.elements.thumbLeft.style.left));
 
-    this.elements.thumbRight.style.right = value + "%";
-    this.elements.progress.style.right = value + "%";
-    this._selected.to = this.calculateValueTo();
-    this.elements.to.innerHTML = this._formatValue(this.getValue().to);
+    this.elements.thumbRight.style.right = percentage + "%";
+    this.elements.progress.style.right = percentage + "%";
+
+    const value = this.calculateValueTo();
+
+    this._selected.to = value;
+    this.elements.to.innerHTML = this._formatValue(value);
   }
 
-  getMoveValue(value, otherValue) {
-    return this.percentWithCheck(value, this.elements.inner.offsetWidth, otherValue);
-  }
+  percentage = (value, otherValue) => this.percentWithCheck(value, this.elements.inner.offsetWidth, otherValue);
 
   reset() {
     this.setValue({
