@@ -198,32 +198,32 @@ describe('events-practice/double-slider', () => {
     expect(rangeSelectEvent[0].type).toEqual("range-select");
   });
 
-  // it('should have a new ranges in produced event', () => {
-  //   const spyDispatchEvent = jest.spyOn(doubleSlider.element, 'dispatchEvent');
-  //   const leftSlider = doubleSlider.element.querySelector('.range-slider__thumb-left');
+  it('should have a new ranges in produced event', () => {
+    const spyDispatchEvent = jest.spyOn(doubleSlider.element, 'dispatchEvent');
+    const leftSlider = doubleSlider.element.querySelector('.range-slider__thumb-left');
 
-  //   const down = new MouseEvent('pointerdown', {
-  //     bubbles: true
-  //   });
+    const down = new MouseEvent('pointerdown', {
+      bubbles: true
+    });
 
-  //   const move = new MouseEvent('pointermove', {
-  //     clientX: 300,
-  //     bubbles: true
-  //   });
+    const move = new MouseEvent('pointermove', {
+      clientX: 300,
+      bubbles: true
+    });
 
-  //   const up = new MouseEvent('pointerup', {
-  //     bubbles: true
-  //   });
+    const up = new MouseEvent('pointerup', {
+      bubbles: true
+    });
 
-  //   leftSlider.dispatchEvent(down);
-  //   leftSlider.dispatchEvent(move);
-  //   leftSlider.dispatchEvent(up);
+    leftSlider.dispatchEvent(down);
+    leftSlider.dispatchEvent(move);
+    leftSlider.dispatchEvent(up);
 
-  //   const customEvent = spyDispatchEvent.mock.calls[0][0];
+    const customEvent = spyDispatchEvent.mock.calls[0][0];
 
-  //   expect(spyDispatchEvent).toHaveBeenCalled();
-  //   expect(customEvent.detail).toEqual({ from: 130, to: 150 });
-  // });
+    expect(spyDispatchEvent).toHaveBeenCalled();
+    expect(customEvent.detail).toEqual({ from: 130, to: 150 });
+  });
 
   it('should have ability to be destroyed', () => {
     doubleSlider.destroy();
