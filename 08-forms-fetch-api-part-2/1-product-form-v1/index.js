@@ -215,7 +215,7 @@ export default class ProductForm {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(this.data.productData[0])
-    })
+    });
     
     try {
       const event = this.productId
