@@ -165,16 +165,27 @@ export default class RangePicker {
     }
   }
 
+  getSelectedItem(inputDate, itemType) {
+    switch (itemType) {
+    case 'from':
+      return inputDate > this.selected.from ? this.selected.from : inputDate;
+    case 'to':
+      return inputDate > this.selected.from ? inputDate : this.selected.from;
+    default:
+      throw new Error("Invalid item type");
+    }
+  }
+
   onRangePickerCellClick(e) {
     const { value } = e.target.dataset;
   
-    if (!value) return;
+    if (!value) {return;}
   
     const date = new Date(value);
   
     this.selected = {
-      from: this.selectingFrom ? date : (date > this.selected.from ? this.selected.from : date),
-      to: this.selectingFrom ? null : (date > this.selected.from ? date : this.selected.from)
+      from: this.selectingFrom ? date : this.getSelectedItem(date, 'from'),
+      to: this.selectingFrom ? null : this.getSelectedItem(date, 'to')
     };
   
     this.selectingFrom = !this.selectingFrom;
