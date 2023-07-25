@@ -6,6 +6,7 @@ const IMGUR_URL = 'https://api.imgur.com/3/upload';
 const BACKEND_URL = 'https://course-js.javascript.ru';
 const CATEGORY_URL = 'api/rest/categories?_sort=weight&_refs=subcategory';
 const PRODUCT_URL = 'api/rest/products';
+const STATUS_ACTIVE = 1;
 
 export default class ProductForm {
   defaultFormData = [{
@@ -57,7 +58,7 @@ export default class ProductForm {
   }
 
   getCategoryOptions(categoryData) {
-    return categoryData.map(item => { return this.getSubcategories(item.subcategories, item.title); }).join('');
+    return categoryData.map(item => this.getSubcategories(item.subcategories, item.title)).join('');
   }
 
   getSubcategories(categoryData, categoryId) {
@@ -67,15 +68,19 @@ export default class ProductForm {
   }
   
   getStatus() {
-    return this.data.productData[0].status === 1
+    return this.data.productData[0].status === STATUS_ACTIVE
       ? `<option value='1' selected>Активен</option><option value='0'>Не активен</option>`
       : `<option value='1'>Активен</option><option value='0' selected>Не активен</option>`;
   }
-
+  
   getImage() {
     if (this.data.productData[0].images && Array.isArray(this.data.productData[0].images)) {
-      return this.data.productData[0].images.map(item => {
-        return `<li class="products-edit__imagelist-item sortable-list__item" style="">
+      return this.data.productData[0].images.map(item => this.createListItemTeamplate(item)).join('');
+    }
+  }
+
+  createListItemTeamplate(item) {
+    return `<li class="products-edit__imagelist-item sortable-list__item" style="">
           <input type="hidden" name="url" value="${item.url}">
           <input type="hidden" name="source" value="${item.source}">
           <span>
@@ -86,8 +91,6 @@ export default class ProductForm {
           <button type="button">
             <img src="icon-trash.svg" data-delete-handle="" alt="delete">
           </button></li>`;
-      }).join('');
-    }
   }
 
   initEventListeners() {
@@ -168,19 +171,14 @@ export default class ProductForm {
     this.save();
   }
 
-  uploadImage = () => {
-    const fileInput = document.createElement('input');
-    const url = new URL(IMGUR_URL);
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.click();
-    fileInput.onchange = async () => {
+  createFileChangeHandler(fileInput) {
+    return async (event) => {
       const [file] = fileInput.files;
-
+  
       if (file) {
         const formData = new FormData();
         const { sortableImageList } = this.subElements;
-
+  
         formData.append('image', file);
         formData.append('name', 'file');
         try {
@@ -189,24 +187,32 @@ export default class ProductForm {
             headers: {
               'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
             },
-            body: {
-              'formData': formData
-            }});
-
+            body: formData
+          });
+  
           let result = await response.json();
-          
+  
           this.data.productData[0].images.push({
             url: `${result.data.link}`,
             sourse: `${result.data.id}`
           });
           imageListContainer.innerHTML = this.getImage();
-
+  
         } catch (error) {
           console.error('Error: ', error);
         }
       }
     };
   }
+  
+  uploadImage = () => {
+    const fileInput = document.createElement('input');
+    const url = new URL(IMGUR_URL);
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.click();
+    fileInput.onchange = this.createFileChangeHandler(fileInput);
+  };
 
   async save() {
     fetchJson(this.urlProduct, {

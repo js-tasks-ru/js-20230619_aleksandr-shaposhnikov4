@@ -32,7 +32,7 @@ export default class ColumnChart {
 
     if (data && Object.values(data).length) {
       this.subElements.header.textContent = this.formatHeading(Object.values(data).reduce((a, b) => a + b, 0));
-      this.subElements.body.innerHTML = this.createColumnElements(data);
+      this.subElements.body.innerHTML = this.createTemplate(data);
       this.element.classList.remove("column-chart_loading");
     }
 
@@ -59,7 +59,7 @@ export default class ColumnChart {
     }
   }
 
-  createDomElement() {
+  getTemplate() {
     return `<div class="column-chart column-chart_loading" style="--chart-height: ${ColumnChart.chartHeight}">
               <div class="column-chart__title">
                 Total ${this._label}
@@ -68,7 +68,7 @@ export default class ColumnChart {
               <div class="column-chart__container">
                 <div data-element="header" class="column-chart__header">${this._value}</div>
                 <div data-element="body" class="column-chart__chart">
-                ${this.createColumnElements(this._data)}
+                ${this.createTemplate(this._data)}
                 </div>
               </div>
             </div>`;    
@@ -77,7 +77,7 @@ export default class ColumnChart {
   render() {
     const parentDiv = document.createElement('div');
 
-    parentDiv.innerHTML = this.createDomElement();
+    parentDiv.innerHTML = this.getTemplate();
 
     this.element = parentDiv.firstElementChild;
 
@@ -105,7 +105,7 @@ export default class ColumnChart {
     return res;
   }
 
-  createColumnElements(data) {
+  createTemplate(data) {
     const maxValue = Math.max(...Object.values(data));
     const scale = this.chartHeight / maxValue;
   
