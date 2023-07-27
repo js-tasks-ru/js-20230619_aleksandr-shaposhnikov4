@@ -88,7 +88,7 @@ export default class RangePicker {
           <time datetime="${monthName}">${monthName}</time>
         </div>
         <div class="rangepicker__day-of-week">
-          <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+          ${this.daysOfWeek()}
         </div>
       <div class="rangepicker__date-grid">`;
 
@@ -104,6 +104,8 @@ export default class RangePicker {
 
     return calendarHTML;
   }
+
+  daysOfWeek = () => ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(day => `<div>${day}</div>`).join('');
 
   renderHighlight() {
     const cells = this.element.querySelectorAll(".rangepicker__cell");
@@ -163,49 +165,46 @@ export default class RangePicker {
     }
   }
 
+  getSelectedItem(inputDate, itemType) {
+    switch (itemType) {
+    case 'from':
+      return inputDate > this.selected.from ? this.selected.from : inputDate;
+    case 'to':
+      return inputDate > this.selected.from ? inputDate : this.selected.from;
+    default:
+      throw new Error("Invalid item type");
+    }
+  }
+
   onRangePickerCellClick(e) {
     const { value } = e.target.dataset;
-    
-    if (value) {
-      const date = new Date(value);
-        
-      if (this.selectingFrom) {
-        this.selected = {
-          from: date,
-          to: null
-        };
-        this.selectingFrom = false;
-        this.renderHighlight();
-      } else {
-        if (date > this.selected.from) {
-          this.selected.to = date;
-        } else {
-          this.selected.to = this.selected.from;
-          this.selected.from = date;
-        }
-        this.selectingFrom = true;
-        this.renderHighlight();
-      }
-        
-      if (this.selected.from && this.selected.to) {
-        this.subElements.from.innerHTML = this.dateToString(this.selected.from);
-        this.subElements.to.innerHTML = this.dateToString(this.selected.to);
-
-        this.element.dispatchEvent(new CustomEvent('date-select', {
-          bubbles: true,
-          detail: this.selected
-        }));
-            
-        this.close();
-      }
+  
+    if (!value) {return;}
+  
+    const date = new Date(value);
+  
+    this.selected = {
+      from: this.selectingFrom ? date : this.getSelectedItem(date, 'from'),
+      to: this.selectingFrom ? null : this.getSelectedItem(date, 'to')
+    };
+  
+    this.selectingFrom = !this.selectingFrom;
+    this.renderHighlight();
+  
+    if (this.selected.from && this.selected.to) {
+      this.subElements.from.innerHTML = this.dateToString(this.selected.from);
+      this.subElements.to.innerHTML = this.dateToString(this.selected.to);
+      this.element.dispatchEvent(new CustomEvent('date-select', {
+        bubbles: true,
+        detail: this.selected
+      }));
+      this.close();
     }
   }
 
   onDocumentClick(e) {
-    if (this.isOpen()) {
-      if (!this.element.contains(e.target)) {
-        this.close();
-      }
+    if (this.isOpen() && !this.element.contains(e.target)) {
+      this.close();
     }
   }
 

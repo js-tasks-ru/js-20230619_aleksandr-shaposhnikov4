@@ -1,27 +1,35 @@
 import fetchJson from './utils/fetch-json.js';
 
 const BACKEND_URL = 'https://course-js.javascript.ru';
+const DEFAULT_START = 0;
+const DEFAULT_STEP = 20;
 
 export default class SortableTable {
   constructor(headerConfig, { data = [], sorted = {}, isSortLocally, url, start, step, end } = {},) {
     this.headerConfig = headerConfig;
     this._data = data;
     this._isSortLocally = isSortLocally ?? false;
-    this._start = start ?? 0;
-    this._step = step ?? 20;
+    this._start = start ?? DEFAULT_START;
+    this._step = step ?? DEFAULT_STEP;
     this._end = end ?? this._start + this._step;
 
     this._sorted = {};
     this._sorted.id = sorted?.id ?? headerConfig.find(item => item.sortable).id;
     this._sorted.order = sorted?.order ?? 'asc';
 
-    this._url = url
-      ? new URL(url, BACKEND_URL)
-      : new URL(BACKEND_URL);
+    this.urlParam = url;
+
+    this._url = this.getNewUrl();
     
     this.render();
   }
   
+  getNewUrl() {
+    return this.urlParam
+      ? new URL(this.urlParam, BACKEND_URL)
+      : new URL(BACKEND_URL);
+  }
+
     infScroll = async() => {
       const {bottom} = this.element.getBoundingClientRect();
       const {id, order} = this._sorted;
@@ -32,7 +40,7 @@ export default class SortableTable {
 
         this.loading = true;
 
-        const data = await this.loadData(id, order, this._start, this._end);
+        const data = await this.load(id, order, this._start, this._end);
 
         this.update(data); 
 
@@ -47,7 +55,7 @@ export default class SortableTable {
   
       this.element = wrapper.firstElementChild;
       this.subElements = this.getSubElements(this.element);
-      const data = await this.loadData(id, order, this._start, this._end);
+      const data = await this.load(id, order, this._start, this._end);
 
       this.renderRows(data);
       this.setEventListener();
@@ -105,7 +113,7 @@ export default class SortableTable {
       const start = 0; 
       const end = start + this._step;
 
-      const data = await this.loadData(id, order, start, end);
+      const data = await this.load(id, order, start, end);
 
       this.renderRows(data);
     }
@@ -130,13 +138,9 @@ export default class SortableTable {
       }
     }
 
-    async loadData (...props) {
-      const data = await this.load(...props);
-
-      return data;
-    }
-
     async load (field, order, start = this._start, end = this._end) {
+      this._url = this.getNewUrl();
+      
       this._url.searchParams.set('_sort', field);
       this._url.searchParams.set('_order', order);
       this._url.searchParams.set('_start', start);
