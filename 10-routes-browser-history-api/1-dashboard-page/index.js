@@ -14,7 +14,6 @@ const SALES_URL = '/sales';
 
 export default class Page {
   constructor() {
-    this.onRangePickerUpdate = this.onRangePickerUpdate.bind(this);
   }
 
   async render() {
@@ -112,7 +111,7 @@ export default class Page {
     return new URL(formattedUrl, BACKEND_URL);
   }
 
-  async onRangePickerUpdate() {
+  onRangePickerUpdate = async () => {
     this.dateRange = this.rangePicker.selected;
 
     this.ordersChart.update(this.dateRange.from, this.dateRange.to);
@@ -122,7 +121,7 @@ export default class Page {
     this.bestsellersTable.url.searchParams.set('from', this.dateRange.from.toISOString());
     this.bestsellersTable.url.searchParams.set('to', this.dateRange.to.toISOString());
     await this.bestsellersTable.sortOnServer();
-  }
+}
 
   remove() {
     this.element.remove();
